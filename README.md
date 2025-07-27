@@ -1,9 +1,6 @@
 # Wallet-Risk-Scoring-Model-Compound-V2-V3-Protocol
 
 ## Model Architecture
-# Compound Protocol Wallet Risk Scoring Model
-
-## Model Architecture
 
 ### Input Layer
 - **Data Source:** 103 Wallets × 1,144 Transactions
