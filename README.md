@@ -158,7 +158,7 @@ Implemented controlled synthetic data generation to create realistic Compound pr
 | 801-1000 | Very High Risk | Extreme leverage, operational issues, default indicators |
 
 ### Score Generation Formula
-> **Formula:**After probability calibration
+> Formula: After probability calibration
 calibrated_probs = calibrated_model.predict_proba(X)
 Percentile-based scoring for balanced distribution
 percentile_ranks = np.argsort(np.argsort(calibrated_probs[:, 2])) / len(calibrated_probs)
