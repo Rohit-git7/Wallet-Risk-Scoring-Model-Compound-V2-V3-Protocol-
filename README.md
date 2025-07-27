@@ -1,52 +1,64 @@
 # Wallet-Risk-Scoring-Model-Compound-V2-V3-Protocol
 
 ## Model Architecture
-INPUT LAYER
-└── 103 Wallets × 1,144 Transactions → Feature Engineering Pipeline
+# Compound Protocol Wallet Risk Scoring Model
 
-FEATURE ENGINEERING (48 Features)
-├── Financial Risk Features (12)
-│ ├── Borrow-to-Supply Ratio
-│ ├── Repay-to-Borrow Ratio
-│ ├── Volume & Amount Statistics
-│ └── Transaction Size Volatility
-├── Behavioral Features (15)
-│ ├── Success/Failure Rates
-│ ├── Gas Usage Patterns
-│ └── Transaction Consistency
-├── Activity Features (10)
-│ ├── Frequency & Engagement
-│ ├── Token Diversification
-│ └── Temporal Patterns
-└── Binary Risk Flags (8)
-├── High Leverage (>0.7)
-├── Poor Repayment (<0.8)
-└── Operational Risks
+## Model Architecture
 
-PREPROCESSING LAYER
-├── StandardScaler() → Mean=0, Std=1
-├── Missing Value Imputation
-└── Feature Normalization
+### Input Layer
+- **Data Source:** 103 Wallets × 1,144 Transactions
+- **Processing:** Feature Engineering Pipeline
 
-ML MODEL CORE
-┌─────────────────────────────────────┐
-│ Logistic Regression (Multinomial) │
-│ ├── Classes: [Low, Medium, High]  │
-│ ├── Regularization: L2 (C=best_C) │
-│ ├── Class Weight: Balanced        │
-│ └── Training: 5-Fold CV           │
-└─────────────────────────────────────┘
+### Feature Engineering (48 Features Total)
 
-CALIBRATION LAYER
-└── Isotonic Calibration → Improved Probability Quality
+#### 1. Financial Risk Features (12)
+- Borrow-to-Supply Ratio
+- Repay-to-Borrow Ratio  
+- Volume & Amount Statistics
+- Transaction Size Volatility
 
-SCORING ENGINE
-├── P(High Risk) → Primary Risk Signal
-├── Percentile Ranking → Balanced Distribution
-└── 0-1000 Scale Mapping
+#### 2. Behavioral Features (15)
+- Success/Failure Rates
+- Gas Usage Patterns
+- Transaction Consistency
 
-OUTPUT
-└── wallet_id | score (0-1000)
+#### 3. Activity Features (10)
+- Frequency & Engagement
+- Token Diversification
+- Temporal Patterns
+
+#### 4. Binary Risk Flags (8)
+- High Leverage (>0.7)
+- Poor Repayment (<0.8)
+- Operational Risks
+
+### Preprocessing Layer
+- **StandardScaler()** → Mean=0, Std=1
+- **Missing Value Imputation**
+- **Feature Normalization**
+
+### ML Model Core
+
+| Component | Configuration |
+|-----------|---------------|
+| **Algorithm** | Logistic Regression (Multinomial) |
+| **Classes** | [Low, Medium, High] |
+| **Solver** | lbfgs |
+| **Regularization** | L2 (C=best_C) |
+| **Class Weight** | Balanced |
+| **Training** | 5-Fold Cross-Validation |
+
+### Calibration Layer
+- **Method:** Isotonic Calibration
+- **Purpose:** Improved Probability Quality
+
+### Scoring Engine
+1. **Primary Signal:** P(High Risk) probability
+2. **Distribution:** Percentile Ranking for balance
+3. **Scale Mapping:** 0-1000 range
+
+### Output
+
 
 
 ---
@@ -162,27 +174,27 @@ risk_scores = np.round(percentile_ranks * 1000).astype(int)
 
 ### Primary Risk Factors (Evidence-Based)
 
-#### 🔴 Leverage Risk (Weight: 25%)
+####  Leverage Risk (Weight: 25%)
 - **Metric:** Borrow-to-supply ratio > 0.7
 - **Justification:** High leverage amplifies market risk exposure. DeFi protocols typically liquidate positions above 80% loan-to-value ratios. Wallets consistently operating near these thresholds face liquidation risk during market volatility.
 
-#### 🟡 Repayment Behavior Risk (Weight: 20%)
+####  Repayment Behavior Risk (Weight: 20%)
 - **Metric:** Repay-to-borrow ratio < 0.8
 - **Justification:** Poor debt servicing indicates financial stress or strategic default risk. Traditional credit scoring heavily weights payment history as the strongest predictor of future defaults.
 
-#### 🟠 Operational Risk (Weight: 20%)
+####  Operational Risk (Weight: 20%)
 - **Metric:** Transaction success rate < 80%
 - **Justification:** High failure rates indicate technical incompetence, insufficient funds, or rushed decision-making under stress. Operational failures often precede financial defaults.
 
-#### 🔵 Activity Pattern Risk (Weight: 15%)
+####  Activity Pattern Risk (Weight: 15%)
 - **Metric:** Low activity or irregular patterns
 - **Justification:** Abandoned positions or erratic behavior suggests poor risk management. Consistent engagement indicates active position management and risk awareness.
 
-#### 🟢 Liquidity Risk (Weight: 10%)
+####  Liquidity Risk (Weight: 10%)
 - **Metric:** High withdraw-to-supply ratios
 - **Justification:** Frequent withdrawals relative to deposits indicate liquidity pressure. This pattern often precedes forced liquidations when users cannot meet margin requirements.
 
-#### 🟣 Diversification Risk (Weight: 10%)
+####  Diversification Risk (Weight: 10%)
 - **Metric:** Token concentration > 80%
 - **Justification:** Concentration in single assets amplifies idiosyncratic risk. Diversified positions provide natural hedging against individual token volatility.
 
