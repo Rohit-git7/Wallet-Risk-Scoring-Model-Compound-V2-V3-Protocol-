@@ -122,7 +122,7 @@ Implemented controlled synthetic data generation to create realistic Compound pr
 - **Volatility Risk:** Above 75th percentile amount variance
 - **Large Transaction Risk:** Large transaction ratio > 30%
 
-**Feature Selection Criteria:** Each feature directly relates to DeFi lending risk factors, has statistical correlation with historical default patterns, and is robust across different market conditions and time periods.
+> **Note:** We have selected these features for our model to train on because each feature directly relates to DeFi lending risk factors , has statistical correlation with historical default patterns and is robust across different market conditions and time periods.
 
 ---
 
@@ -141,7 +141,8 @@ Implemented controlled synthetic data generation to create realistic Compound pr
 - **Time-based Features:** Min-max scaling to range
 - **Trend Features:** Standardized slopes and correlation coefficients
 
-**Rationale:** StandardScaler ensures all features contribute equally to logistic regression while preserving relative relationships and this approach handles the wide variance in DeFi transaction amounts and frequencies.
+> **Note:** These normalization methods are chosen because StandardScaler ensures all features contribute equally to logistic regression while preserving relative relationships and this approach handles the wide variance in DeFi transaction amounts and frequencies.
+
 
 ---
 
@@ -157,9 +158,8 @@ Implemented controlled synthetic data generation to create realistic Compound pr
 | 801-1000 | Very High Risk | Extreme leverage, operational issues, default indicators |
 
 ### Score Generation Formula
-After probability calibration
+> **Formula:**After probability calibration
 calibrated_probs = calibrated_model.predict_proba(X)
-
 Percentile-based scoring for balanced distribution
 percentile_ranks = np.argsort(np.argsort(calibrated_probs[:, 2])) / len(calibrated_probs)
 risk_scores = np.round(percentile_ranks * 1000).astype(int)
@@ -172,28 +172,23 @@ risk_scores = np.round(percentile_ranks * 1000).astype(int)
 ### Primary Risk Factors (Evidence-Based)
 
 ####  Leverage Risk (Weight: 25%)
-- **Metric:** Borrow-to-supply ratio > 0.7
-- **Justification:** High leverage amplifies market risk exposure. DeFi protocols typically liquidate positions above 80% loan-to-value ratios. Wallets consistently operating near these thresholds face liquidation risk during market volatility.
+- **Metric:** Borrow-to-supply ratio > 0.7 used as high leverage amplifies market risk exposure. DeFi protocols typically liquidate positions above 80% loan-to-value ratios. Wallets consistently operating near these thresholds face liquidation risk during market volatility.
 
 ####  Repayment Behavior Risk (Weight: 20%)
-- **Metric:** Repay-to-borrow ratio < 0.8
-- **Justification:** Poor debt servicing indicates financial stress or strategic default risk. Traditional credit scoring heavily weights payment history as the strongest predictor of future defaults.
+- **Metric:** Repay-to-borrow ratio < 0.8 used as poor debt servicing indicates financial stress or strategic default risk. Traditional credit scoring heavily weights payment history as the strongest predictor of future defaults.
 
 ####  Operational Risk (Weight: 20%)
-- **Metric:** Transaction success rate < 80%
-- **Justification:** High failure rates indicate technical incompetence, insufficient funds, or rushed decision-making under stress. Operational failures often precede financial defaults.
+- **Metric:** Transaction success rate < 80% used as high failure rates indicate technical incompetence, insufficient funds, or rushed decision-making under stress. Operational failures often precede financial defaults.
 
 ####  Activity Pattern Risk (Weight: 15%)
-- **Metric:** Low activity or irregular patterns
-- **Justification:** Abandoned positions or erratic behavior suggests poor risk management. Consistent engagement indicates active position management and risk awareness.
+- **Metric:** Low activity or irregular patterns used as abandoned positions or erratic behavior suggests poor risk management. Consistent engagement indicates active position management and risk awareness.
 
 ####  Liquidity Risk (Weight: 10%)
 - **Metric:** High withdraw-to-supply ratios
 - **Justification:** Frequent withdrawals relative to deposits indicate liquidity pressure. This pattern often precedes forced liquidations when users cannot meet margin requirements.
 
 ####  Diversification Risk (Weight: 10%)
-- **Metric:** Token concentration > 80%
-- **Justification:** Concentration in single assets amplifies idiosyncratic risk. Diversified positions provide natural hedging against individual token volatility.
+- **Metric:** Token concentration > 80% used as frequent withdrawals relative to deposits indicate liquidity pressure. This pattern often precedes forced liquidations when users cannot meet margin requirements.
 
 ---
 
@@ -215,11 +210,8 @@ risk_scores = np.round(percentile_ranks * 1000).astype(int)
 - **Risk Segmentation:** Scores enable sophisticated risk-based pricing and limits
 - **Integration Ready:** APIs for lending platforms, insurance protocols, and risk management systems
 
----
-
 ## Model Performance
 - **Cross-Validation Accuracy:** ~85%
 - **Model Type:** Multinomial Logistic Regression with Isotonic Calibration
 - **Training Data:** 1,144 transactions across 103 wallets
-- **Output Format:** `wallet_id | score` (0-1000 range)
 
